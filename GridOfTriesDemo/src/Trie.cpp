@@ -101,3 +101,27 @@ void Trie::displayHelper(TrieNode* node, std::string currentWord) {
         displayHelper(child.second, currentWord + child.first);
     }
 }
+
+// Auto-complete: Returns a vector of product suggestions based on the prefix.
+std::vector<std::string> Trie::autoComplete(const std::string& prefix) {
+    std::vector<std::string> suggestions;
+    TrieNode* node = root;
+    for (char c : prefix) {
+        if (node->children.find(c) == node->children.end())
+            return suggestions;  // Return empty if prefix not present.
+        node = node->children[c];
+    }
+    // Now traverse from this node and collect suggestions.
+    autoCompleteHelper(node, prefix, suggestions);
+    return suggestions;
+}
+
+// Recursive helper to collect product suggestions.
+void Trie::autoCompleteHelper(TrieNode* node, std::string currentWord, std::vector<std::string>& suggestions) {
+    if (node->isEndOfProduct) {
+        suggestions.push_back(currentWord);
+    }
+    for (auto& child : node->children) {
+        autoCompleteHelper(child.second, currentWord + child.first, suggestions);
+    }
+}

@@ -1,6 +1,7 @@
 #include "GridOfTries.h"
 #include <iostream>
 #include <string>
+#include <vector>
 
 void printMenu() {
     std::cout << "\n----- Demo Menu -----\n";
@@ -9,7 +10,8 @@ void printMenu() {
     std::cout << "3. Update product popularity\n";
     std::cout << "4. Delete a product\n";
     std::cout << "5. Display all products in a category\n";
-    std::cout << "6. Exit\n";
+    std::cout << "6. Auto-complete suggestions\n";
+    std::cout << "7. Exit\n";
     std::cout << "Enter your choice: ";
 }
 
@@ -18,12 +20,14 @@ int main() {
     int choice;
     std::string category, product;
     int popularity;
+    std::string prefix;
 
     // Sample pre-inserted data for demo purposes.
     grid.insertProduct("Electronics", "Smartphone", 50);
     grid.insertProduct("Electronics", "Smartwatch", 30);
     grid.insertProduct("Books", "DataStructures", 20);
     grid.insertProduct("Books", "Algorithms", 40);
+    grid.insertProduct("Electronics", "SmartTV", 35);
 
     while (true) {
         printMenu();
@@ -86,6 +90,31 @@ int main() {
                 break;
 
             case 6:
+                std::cout << "Enter category for auto-complete: ";
+                std::getline(std::cin, category);
+                std::cout << "Enter prefix: ";
+                std::getline(std::cin, prefix);
+                {
+                    // Check if the category exists using the map.
+                    if (grid.categoryTries.find(category) == grid.categoryTries.end()) {
+                        std::cout << "Category not found.\n";
+                        break;
+                    }
+                    
+                    // Retrieve auto-complete suggestions from the trie of the given category.
+                    std::vector<std::string> suggestions = grid.categoryTries[category]->autoComplete(prefix);
+                    if (suggestions.empty()) {
+                        std::cout << "No suggestions found for prefix '" << prefix << "'.\n";
+                    } else {
+                        std::cout << "Suggestions:\n";
+                        for (const auto& suggestion : suggestions) {
+                            std::cout << "- " << suggestion << "\n";
+                        }
+                    }
+                }
+                break;
+            
+            case 7:
                 std::cout << "Exiting demo.\n";
                 return 0;
 

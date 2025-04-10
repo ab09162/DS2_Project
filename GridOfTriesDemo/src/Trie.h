@@ -3,6 +3,7 @@
 
 #include <unordered_map>
 #include <string>
+#include <vector>
 
 // Define the structure for a node in the Trie.
 struct TrieNode {
@@ -32,18 +33,24 @@ public:
     // Delete a product from the trie.
     bool remove(const std::string& product);
 
-    // Optional: Display all products with their popularity (for demo)
+    // Display all products in the trie.
     void display();
     
+    // Auto-complete function: returns a vector of suggestions given a prefix.
+    std::vector<std::string> autoComplete(const std::string& prefix);
+
 private:
     // Helper function for deletion.
     bool removeHelper(TrieNode* node, const std::string& product, int depth);
     
-    // Helper function to recursively free memory.
+    // Recursively free memory.
     void freeNode(TrieNode* node);
 
     // Helper function for display.
     void displayHelper(TrieNode* node, std::string currentWord);
+
+    // Helper function for auto-complete.
+    void autoCompleteHelper(TrieNode* node, std::string currentWord, std::vector<std::string>& suggestions);
 };
 
 #endif  // TRIE_H
