@@ -12,13 +12,13 @@ GridOfTries::~GridOfTries() {
     }
 }
 
-void GridOfTries::insertProduct(const std::string& category, const std::string& product, int initPopularity) {
-    // If the category doesn't exist, create a new Trie.
+void GridOfTries::insertProduct(const std::string& category, const std::string& product, int initPopularity, float price) {
     if (categoryTries.find(category) == categoryTries.end()) {
         categoryTries[category] = new Trie();
     }
-    categoryTries[category]->insert(product, initPopularity);
+    categoryTries[category]->insert(product, initPopularity, price);
 }
+
 
 bool GridOfTries::searchProduct(const std::string& category, const std::string& product) {
     if (categoryTries.find(category) == categoryTries.end())
@@ -30,6 +30,12 @@ bool GridOfTries::updateProductPopularity(const std::string& category, const std
     if (categoryTries.find(category) == categoryTries.end())
         return false;
     return categoryTries[category]->updatePopularity(product, newPopularity);
+}
+
+bool GridOfTries::updateProductPrice(const std::string& category, const std::string& product, float newPrice) {
+    if (categoryTries.find(category) == categoryTries.end())
+        return false;
+    return categoryTries[category]->updatePrice(product, newPrice);
 }
 
 bool GridOfTries::deleteProduct(const std::string& category, const std::string& product) {

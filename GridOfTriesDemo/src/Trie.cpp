@@ -2,7 +2,7 @@
 #include <iostream>
 
 // Constructor for TrieNode.
-TrieNode::TrieNode() : isEndOfProduct(false), popularity(0) {}
+TrieNode::TrieNode() : isEndOfProduct(false), popularity(0), price(0.0f) {}
 
 // Constructor for Trie.
 Trie::Trie() {
@@ -24,7 +24,7 @@ void Trie::freeNode(TrieNode* node) {
     delete node;
 }
 
-void Trie::insert(const std::string& product, int initPopularity) {
+void Trie::insert(const std::string& product, int initPopularity, float price) {
     TrieNode* node = root;
     for (char c : product) {
         if (node->children.find(c) == node->children.end()) {
@@ -34,7 +34,9 @@ void Trie::insert(const std::string& product, int initPopularity) {
     }
     node->isEndOfProduct = true;
     node->popularity = initPopularity;
+    node->price = price;
 }
+
 
 bool Trie::search(const std::string& product) {
     TrieNode* node = root;
@@ -55,6 +57,20 @@ bool Trie::updatePopularity(const std::string& product, int newPopularity) {
     }
     if (node && node->isEndOfProduct) {
         node->popularity = newPopularity;
+        return true;
+    }
+    return false;
+}
+
+bool Trie::updatePrice(const std::string& product, float newPrice) {
+    TrieNode* node = root;
+        for (char c : product) {
+        if (node->children.find(c) == node->children.end())
+            return false;
+        node = node->children[c];
+    }
+    if (node && node->isEndOfProduct) {
+        node->price = newPrice;
         return true;
     }
     return false;
@@ -95,9 +111,12 @@ void Trie::display() {
 
 void Trie::displayHelper(TrieNode* node, std::string currentWord) {
     if (node->isEndOfProduct) {
-        std::cout << "Product: " << currentWord << " | Popularity: " << node->popularity << std::endl;
+        std::cout << "Product: " << currentWord 
+                  << " | Popularity: " << node->popularity << "%"
+                  << " | Price: $" << node->price << std::endl;
     }
     for (auto& child : node->children) {
         displayHelper(child.second, currentWord + child.first);
     }
 }
+

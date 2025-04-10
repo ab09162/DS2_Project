@@ -5,11 +5,12 @@
 void printMenu() {
     std::cout << "\n----- Demo Menu -----\n";
     std::cout << "1. Insert a product\n";
-    std::cout << "2. Search for a product\n";
+    std::cout << "2. Search for a product\n"; //change this why is it asking for category and then sayinf ya lmao its in the categor
     std::cout << "3. Update product popularity\n";
-    std::cout << "4. Delete a product\n";
-    std::cout << "5. Display all products in a category\n";
-    std::cout << "6. Exit\n";
+    std::cout << "4. Update product price\n";
+    std::cout << "5. Delete a product\n";
+    std::cout << "6. Display all products in a category\n";
+    std::cout << "7. Exit\n";
     std::cout << "Enter your choice: ";
 }
 
@@ -18,12 +19,42 @@ int main() {
     int choice;
     std::string category, product;
     int popularity;
+    float price;
 
     // Sample pre-inserted data for demo purposes.
-    grid.insertProduct("Electronics", "Smartphone", 50);
-    grid.insertProduct("Electronics", "Smartwatch", 30);
-    grid.insertProduct("Books", "DataStructures", 20);
-    grid.insertProduct("Books", "Algorithms", 40);
+    grid.insertProduct("Electronics", "Laptop", 80, 1500);
+    grid.insertProduct("Electronics", "Tablet", 70, 600);
+    grid.insertProduct("Electronics", "Headphones", 90, 200);
+    grid.insertProduct("Electronics", "Smart TV", 60, 1200);
+    grid.insertProduct("Books", "C++ Programming", 45, 55);
+    grid.insertProduct("Books", "Python for Data Science", 50, 60);
+    grid.insertProduct("Books", "Introduction to Algorithms", 85, 75);
+    grid.insertProduct("Books", "Clean Code", 95, 40);
+    grid.insertProduct("Clothing", "T-Shirt", 110, 15);
+    grid.insertProduct("Clothing", "Jeans", 120, 40);
+    grid.insertProduct("Clothing", "Jacket", 80, 85);
+    grid.insertProduct("Clothing", "Sneakers", 75, 90);
+    grid.insertProduct("Sports", "Soccer Ball", 40, 25);
+    grid.insertProduct("Sports", "Tennis Racket", 65, 120);
+    grid.insertProduct("Sports", "Basketball", 50, 30);
+    grid.insertProduct("Sports", "Running Shoes", 90, 150);
+    grid.insertProduct("Furniture", "Sofa", 60, 500);
+    grid.insertProduct("Furniture", "Dining Table", 55, 300);
+    grid.insertProduct("Furniture", "Bookshelf", 45, 120);
+    grid.insertProduct("Furniture", "Chair", 110, 70);
+    grid.insertProduct("Toys", "Lego Set", 95, 60);
+    grid.insertProduct("Toys", "Action Figure", 80, 25);
+    grid.insertProduct("Toys", "Doll", 70, 20);
+    grid.insertProduct("Toys", "Remote Control Car", 85, 50);
+    grid.insertProduct("Beauty", "Shampoo", 130, 10);
+    grid.insertProduct("Beauty", "Face Cream", 140, 30);
+    grid.insertProduct("Beauty", "Perfume", 110, 50);
+    grid.insertProduct("Beauty", "Lipstick", 95, 20);
+    grid.insertProduct("Food", "Organic Apples", 120, 3);
+    grid.insertProduct("Food", "Whole Wheat Bread", 130, 2);
+    grid.insertProduct("Food", "Almonds", 90, 12);
+    grid.insertProduct("Food", "Greek Yogurt", 85, 4);
+
 
     while (true) {
         printMenu();
@@ -38,10 +69,13 @@ int main() {
                 std::getline(std::cin, product);
                 std::cout << "Enter initial popularity: ";
                 std::cin >> popularity;
+                std::cout << "Enter price: ";
+                std::cin >> price;
                 std::cin.ignore();
-                grid.insertProduct(category, product, popularity);
+                grid.insertProduct(category, product, popularity, price);
                 std::cout << "Product inserted successfully.\n";
                 break;
+
 
             case 2:
                 std::cout << "Enter category: ";
@@ -73,19 +107,33 @@ int main() {
                 std::getline(std::cin, category);
                 std::cout << "Enter product name: ";
                 std::getline(std::cin, product);
+                std::cout << "Enter new price: ";
+                std::cin >> price;
+                std::cin.ignore();
+                if (grid.updateProductPrice(category, product, price))
+                    std::cout << "Product price updated.\n";
+                else
+                    std::cout << "Update failed: Product not found.\n";
+                break;
+
+            case 5:
+                std::cout << "Enter category: ";
+                std::getline(std::cin, category);
+                std::cout << "Enter product name: ";
+                std::getline(std::cin, product);
                 if (grid.deleteProduct(category, product))
                     std::cout << "Product deleted successfully.\n";
                 else
                     std::cout << "Deletion failed: Product not found.\n";
                 break;
 
-            case 5:
+            case 6:
                 std::cout << "Enter category: ";
                 std::getline(std::cin, category);
                 grid.displayCategory(category);
                 break;
 
-            case 6:
+            case 7:
                 std::cout << "Exiting demo.\n";
                 return 0;
 

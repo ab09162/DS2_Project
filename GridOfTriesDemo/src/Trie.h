@@ -8,6 +8,8 @@
 struct TrieNode {
     bool isEndOfProduct;
     int popularity;
+    float price;  
+
     std::unordered_map<char, TrieNode*> children;
 
     TrieNode();
@@ -21,13 +23,15 @@ public:
     ~Trie();
 
     // Insert a product into the trie.
-    void insert(const std::string& product, int initPopularity = 0);
+    void insert(const std::string& product, int initPopularity = 0, float price = 0);
 
     // Search for a product by exact name.
     bool search(const std::string& product);
 
     // Update a product's popularity.
     bool updatePopularity(const std::string& product, int newPopularity);
+
+    bool updatePrice(const std::string& product, float newPrice);
 
     // Delete a product from the trie.
     bool remove(const std::string& product);

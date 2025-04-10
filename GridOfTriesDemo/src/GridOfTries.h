@@ -14,13 +14,16 @@ public:
     ~GridOfTries();
 
     // Insert a product into the given category.
-    void insertProduct(const std::string& category, const std::string& product, int initPopularity = 0);
+    void insertProduct(const std::string& category, const std::string& product, int initPopularity, float price);
 
     // Search for a product in a specific category.
     bool searchProduct(const std::string& category, const std::string& product);
 
     // Update a product's popularity in a category.
     bool updateProductPopularity(const std::string& category, const std::string& product, int newPopularity);
+
+    // Update a product's price in a category.
+    bool updateProductPrice(const std::string& category, const std::string& product, float newPrice);
 
     // Delete a product from a category.
     bool deleteProduct(const std::string& category, const std::string& product);
