@@ -1,6 +1,7 @@
 #include "GridOfTries.h"
 #include <iostream>
 #include <string>
+#include <vector>
 
 void printMenu() {
     std::cout << "\n----- Demo Menu -----\n";
@@ -10,7 +11,10 @@ void printMenu() {
     std::cout << "4. Update product price\n";
     std::cout << "5. Delete a product\n";
     std::cout << "6. Display all products in a category\n";
-    std::cout << "7. Exit\n";
+    std::cout << "7. Delete a product\n";
+    std::cout << "8. Display all products in a category\n";
+    std::cout << "9. Auto-complete suggestions\n";
+    std::cout << "10. Exit\n";
     std::cout << "Enter your choice: ";
 }
 
@@ -54,6 +58,8 @@ int main() {
     grid.insertProduct("Food", "Whole Wheat Bread", 130, 2);
     grid.insertProduct("Food", "Almonds", 90, 12);
     grid.insertProduct("Food", "Greek Yogurt", 85, 4);
+
+    std::string prefix;
 
 
     while (true) {
@@ -134,6 +140,31 @@ int main() {
                 break;
 
             case 7:
+                std::cout << "Enter category for auto-complete: ";
+                std::getline(std::cin, category);
+                std::cout << "Enter prefix: ";
+                std::getline(std::cin, prefix);
+                {
+                    // Check if the category exists using the map.
+                    if (grid.categoryTries.find(category) == grid.categoryTries.end()) {
+                        std::cout << "Category not found.\n";
+                        break;
+                    }
+                    
+                    // Retrieve auto-complete suggestions from the trie of the given category.
+                    std::vector<std::string> suggestions = grid.categoryTries[category]->autoComplete(prefix);
+                    if (suggestions.empty()) {
+                        std::cout << "No suggestions found for prefix '" << prefix << "'.\n";
+                    } else {
+                        std::cout << "Suggestions:\n";
+                        for (const auto& suggestion : suggestions) {
+                            std::cout << "- " << suggestion << "\n";
+                        }
+                    }
+                }
+                break;
+            
+            case 8:
                 std::cout << "Exiting demo.\n";
                 return 0;
 
