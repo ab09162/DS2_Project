@@ -27,7 +27,7 @@ public:
     void insert(const std::string& product, int initPopularity = 0, float price = 0);
 
     // Search for a product by exact name.
-    bool search(const std::string& product);
+    TrieNode* search(const std::string& product);
 
     // Update a product's popularity.
     bool updatePopularity(const std::string& product, int newPopularity);

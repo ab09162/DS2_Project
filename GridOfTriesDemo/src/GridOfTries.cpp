@@ -27,14 +27,18 @@ bool GridOfTries::searchProduct1(const std::string& category, const std::string&
 
 bool GridOfTries::searchProduct2(const std::string& product) {
     for (const auto& pair : categoryTries) {
-        if (pair.second->search(product)) {
+        TrieNode* node = pair.second->search(product);
+        if (node) {
             std::cout << "Found in category: " << pair.first << std::endl;
+            std::cout << "Price: $" << node->price << std::endl;
+            std::cout << "Popularity: " << node->popularity << std::endl;
             return true;
         }
     }
     std::cout << "Product '" << product << "' not found in any category." << std::endl;
     return false;
 }
+
 
 bool GridOfTries::updateProductPopularity(const std::string& category, const std::string& product, int newPopularity) {
     if (categoryTries.find(category) == categoryTries.end())
