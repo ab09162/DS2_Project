@@ -37,15 +37,18 @@ void Trie::insert(const std::string& product, int initPopularity, float price) {
     node->price = price;
 }
 
-bool Trie::search(const std::string& product) {
+TrieNode* Trie::search(const std::string& product) {
     TrieNode* node = root;
     for (char c : product) {
         if (node->children.find(c) == node->children.end())
-            return false;
+            return nullptr;
         node = node->children[c];
     }
-    return node && node->isEndOfProduct;
+    if (node && node->isEndOfProduct)
+        return node;
+    return nullptr;
 }
+
 
 bool Trie::updatePopularity(const std::string& product, int newPopularity) {
     TrieNode* node = root;
