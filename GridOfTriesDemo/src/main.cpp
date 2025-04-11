@@ -95,11 +95,10 @@ int main() {
 
             case 3:
                 std::cout << "Enter product name: ";
-                if (grid.searchProduct2(product))
-                    std::cout << product << "found in category '" << category << "'.\n";
-                else
-                    std::cout << "Product not found.\n";
+                std::getline(std::cin, product);
+                grid.searchProduct2(product);  // uses new function
                 break;
+
 
             case 4:
                 std::cout << "Enter category: ";
