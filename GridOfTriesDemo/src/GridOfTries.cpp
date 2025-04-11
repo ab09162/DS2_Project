@@ -19,11 +19,21 @@ void GridOfTries::insertProduct(const std::string& category, const std::string& 
     categoryTries[category]->insert(product, initPopularity, price);
 }
 
-
-bool GridOfTries::searchProduct(const std::string& category, const std::string& product) {
+bool GridOfTries::searchProduct1(const std::string& category, const std::string& product) {
     if (categoryTries.find(category) == categoryTries.end())
         return false;
     return categoryTries[category]->search(product);
+}
+
+bool GridOfTries::searchProduct2(const std::string& product) {
+    for (const auto& pair : categoryTries) {
+        if (pair.second->search(product)) {
+            std::cout << "Found in category: " << pair.first << std::endl;
+            return true;
+        }
+    }
+    std::cout << "Product '" << product << "' not found in any category." << std::endl;
+    return false;
 }
 
 bool GridOfTries::updateProductPopularity(const std::string& category, const std::string& product, int newPopularity) {

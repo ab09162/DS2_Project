@@ -6,15 +6,14 @@
 void printMenu() {
     std::cout << "\n----- Demo Menu -----\n";
     std::cout << "1. Insert a product\n";
-    std::cout << "2. Search for a product\n"; //change this why is it asking for category and then sayinf ya lmao its in the categor
-    std::cout << "3. Update product popularity\n";
-    std::cout << "4. Update product price\n";
-    std::cout << "5. Delete a product\n";
-    std::cout << "6. Display all products in a category\n";
-    std::cout << "7. Delete a product\n";
-    std::cout << "8. Display all products in a category\n";
-    std::cout << "9. Auto-complete suggestions\n";
-    std::cout << "10. Exit\n";
+    std::cout << "2. Search for a product using Category name\n"; 
+    std::cout << "3. Search for a product\n"; 
+    std::cout << "4. Update product popularity\n";
+    std::cout << "5. Update product price\n";
+    std::cout << "6. Delete a product\n";
+    std::cout << "7. Display all products in a category\n";
+    std::cout << "8. Auto-complete suggestions\n";
+    std::cout << "9. Exit\n";
     std::cout << "Enter your choice: ";
 }
 
@@ -88,13 +87,21 @@ int main() {
                 std::getline(std::cin, category);
                 std::cout << "Enter product name: ";
                 std::getline(std::cin, product);
-                if (grid.searchProduct(category, product))
+                if (grid.searchProduct1(category, product))
                     std::cout << "Product found in category '" << category << "'.\n";
                 else
                     std::cout << "Product not found.\n";
                 break;
 
             case 3:
+                std::cout << "Enter product name: ";
+                if (grid.searchProduct2(product))
+                    std::cout << product << "found in category '" << category << "'.\n";
+                else
+                    std::cout << "Product not found.\n";
+                break;
+
+            case 4:
                 std::cout << "Enter category: ";
                 std::getline(std::cin, category);
                 std::cout << "Enter product name: ";
@@ -108,7 +115,7 @@ int main() {
                     std::cout << "Update failed: Product not found.\n";
                 break;
 
-            case 4:
+            case 5:
                 std::cout << "Enter category: ";
                 std::getline(std::cin, category);
                 std::cout << "Enter product name: ";
@@ -122,7 +129,7 @@ int main() {
                     std::cout << "Update failed: Product not found.\n";
                 break;
 
-            case 5:
+            case 6:
                 std::cout << "Enter category: ";
                 std::getline(std::cin, category);
                 std::cout << "Enter product name: ";
@@ -133,13 +140,13 @@ int main() {
                     std::cout << "Deletion failed: Product not found.\n";
                 break;
 
-            case 6:
+            case 7:
                 std::cout << "Enter category: ";
                 std::getline(std::cin, category);
                 grid.displayCategory(category);
                 break;
 
-            case 7:
+            case 8:
                 std::cout << "Enter category for auto-complete: ";
                 std::getline(std::cin, category);
                 std::cout << "Enter prefix: ";
@@ -164,7 +171,7 @@ int main() {
                 }
                 break;
             
-            case 8:
+            case 9:
                 std::cout << "Exiting demo.\n";
                 return 0;
 
