@@ -79,30 +79,35 @@ bool Trie::updatePrice(const std::string& product, float newPrice) {
 }
 
 bool Trie::remove(const std::string& product) {
-    return removeHelper(root, product, 0);
+    bool deleted = false;
+    removeHelper(root, product, 0, deleted);
+    return deleted;
 }
 
-// Helper function for recursive deletion.
-bool Trie::removeHelper(TrieNode* node, const std::string& product, int depth) {
+bool Trie::removeHelper(TrieNode* node, const std::string& product, int depth, bool& deleted) {
     if (!node)
         return false;
+
     if (depth == product.size()) {
         if (!node->isEndOfProduct)
             return false;
         node->isEndOfProduct = false;
-        // If no children exist, this node can be deleted.
-        return node->children.empty();
+        deleted = true;
+        return node->children.empty();  // tells whether this node should be deleted
     }
+
     char c = product[depth];
     if (node->children.find(c) == node->children.end())
         return false;
-    bool shouldDeleteChild = removeHelper(node->children[c], product, depth + 1);
+
+    bool shouldDeleteChild = removeHelper(node->children[c], product, depth + 1, deleted);
+    
     if (shouldDeleteChild) {
         delete node->children[c];
         node->children.erase(c);
-        // Delete this node if it is no longer the end of another product and has no other children.
-        return (!node->isEndOfProduct && node->children.empty());
+        return !node->isEndOfProduct && node->children.empty();
     }
+
     return false;
 }
 

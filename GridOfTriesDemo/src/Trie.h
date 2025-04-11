@@ -45,7 +45,7 @@ public:
 
 private:
     // Helper function for deletion.
-    bool removeHelper(TrieNode* node, const std::string& product, int depth);
+    bool removeHelper(TrieNode* node, const std::string& product, int depth, bool& deleted);
     
     // Recursively free memory.
     void freeNode(TrieNode* node);
