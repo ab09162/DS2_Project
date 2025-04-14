@@ -1,0 +1,3 @@
+C:/GitHub/DS2_Project/DS2_Proj/CMakeFiles/e_commerce_gui.dir
+C:/GitHub/DS2_Project/DS2_Proj/CMakeFiles/edit_cache.dir
+C:/GitHub/DS2_Project/DS2_Proj/CMakeFiles/rebuild_cache.dir
