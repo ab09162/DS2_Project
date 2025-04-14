@@ -1,0 +1,3 @@
+[submodule "DS2_Proj/extern/imgui"]
+	path = DS2_Proj/extern/imgui
+	url = https://github.com/ocornut/imgui.git
