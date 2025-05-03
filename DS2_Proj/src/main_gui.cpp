@@ -1,231 +1,198 @@
+// File: main_gui.cpp
 #include "ProductCatalog.h" // Your backend logic
 
 // --- Dependency Headers ---
-// GLAD (needs to be included before GLFW) - Loads OpenGL functions
 #include "glad/glad.h"
-// GLFW (Windowing and Input)
 #include <GLFW/glfw3.h>
-// ImGui Core + Backends
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 
-// Standard Libraries
+// For image loading
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
 #include <iostream>
 #include <vector>
 #include <string>
-#include <cstdio> // For sprintf (safe version is better if available)
+#include <map>
+#include <cstdio>
 
 // --- GLFW Error Callback ---
 static void glfw_error_callback(int error, const char* description) {
     std::cerr << "GLFW Error " << error << ": " << description << std::endl;
 }
 
-int main(int, char**) {
-    // --- 1. Initialize GLFW ---
-    glfwSetErrorCallback(glfw_error_callback);
-    if (!glfwInit()) {
-        std::cerr << "Failed to initialize GLFW" << std::endl;
-        return 1;
-    }
+// Helper: load a texture from file into OpenGL
+bool LoadTextureFromFile(const char* filename, GLuint* out_texture, int* out_width, int* out_height) {
+    int width, height, channels;
+    unsigned char* data = stbi_load(filename, &width, &height, &channels, 4);
+    if (!data) return false;
+    glGenTextures(1, out_texture);
+    glBindTexture(GL_TEXTURE_2D, *out_texture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    stbi_image_free(data);
+    *out_width  = width;
+    *out_height = height;
+    return true;
+}
 
-    // --- 2. Set OpenGL Version and Core Profile ---
-    // Request OpenGL 3.3 Core context (adjust if needed, matches GLAD)
-    const char* glsl_version = "#version 330 core"; // Set GLSL version string for ImGui
+int main(int, char**) {
+    // --- GLFW init ---
+    glfwSetErrorCallback(glfw_error_callback);
+    if (!glfwInit()) return 1;
+
+    const char* glsl_version = "#version 330 core";
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 #ifdef __APPLE__
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // Required on macOS
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
 
-    // --- 3. Create Window ---
-    GLFWwindow* window = glfwCreateWindow(1280, 720, "E-Commerce Search Demo (ImGui)", nullptr, nullptr);
-    if (window == nullptr) {
-        std::cerr << "Failed to create GLFW window" << std::endl;
-        glfwTerminate();
-        return 1;
-    }
+    GLFWwindow* window = glfwCreateWindow(1280, 720, "Product Catalog", nullptr, nullptr);
+    if (!window) { glfwTerminate(); return 1; }
     glfwMakeContextCurrent(window);
-    glfwSwapInterval(1); // Enable vsync
+    glfwSwapInterval(1);
 
-    // --- 4. Initialize GLAD ---
-    // Load OpenGL function pointers
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-        std::cerr << "Failed to initialize GLAD" << std::endl;
-        glfwDestroyWindow(window);
-        glfwTerminate();
-        return 1;
-    }
-    std::cout << "OpenGL Vendor: " << glGetString(GL_VENDOR) << std::endl;
-    std::cout << "OpenGL Renderer: " << glGetString(GL_RENDERER) << std::endl;
-    std::cout << "OpenGL Version: " << glGetString(GL_VERSION) << std::endl;
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) return 1;
 
-
-    // --- 5. Setup ImGui Context ---
+    // --- ImGui setup ---
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO(); (void)io; // Basic config
-    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
-    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;  // Enable Gamepad Controls
-
-    // Setup Dear ImGui style (optional: Dark, Light, Classic)
+    ImGuiIO& io = ImGui::GetIO();
+    io.FontGlobalScale = 1.5f;
+    ImGuiStyle& style = ImGui::GetStyle();
+    style.FramePadding = ImVec2(8,8);
+    style.ItemSpacing  = ImVec2(12,12);
     ImGui::StyleColorsDark();
-    //ImGui::StyleColorsClassic();
-
-    // Setup Platform/Renderer backends
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init(glsl_version);
 
-
-    // --- 6. Prepare Your Application Data ---
+    // --- Prepare Data ---
     ProductCatalog catalog;
-    // Add sample data (reuse from previous main.cpp or load from file)
-    catalog.addProduct("Electronics", "Smartphone", 101, 15.0);
-    catalog.addProduct("Electronics", "Smartwatch", 102, 12.0);
-    catalog.addProduct("Electronics", "Smart TV", 103, 10.0);
-    catalog.addProduct("Electronics", "Laptop", 104, 20.0);
-    catalog.addProduct("Electronics", "Wireless Earbuds", 105, 8.0);
-    catalog.addProduct("Books", "Data Structures and Algorithms", 201, 5.0);
-    catalog.addProduct("Books", "Clean Code", 204, 3.0);
-    catalog.addProduct("Clothing", "Smart T-Shirt", 301, 2.0);
-    catalog.addProduct("Clothing", "Running Shoes", 302, 6.0);
+    catalog.addProduct("Electronics", "Smartphone", 101, 699.99f);
+    catalog.addProduct("Electronics", "Smartwatch", 102, 199.99f);
+    catalog.addProduct("Electronics", "Smart TV", 103, 1299.00f);
+    catalog.addProduct("Books", "Data Structures and Algorithms", 201, 49.99f);
+    catalog.addProduct("Books", "Clean Code", 204, 39.99f);
 
-    // State variables for the UI
-    char searchQuery[256] = ""; // Input buffer for search text
-    int selectedCategoryIndex = 0; // Index for the dropdown
-    std::vector<ProductSuggestion> currentSuggestions; // Results display
-    std::string feedbackMessage = ""; // To show feedback after actions
+    // UI state
+    char searchQuery[256] = "";
+    int selectedCategoryIndex = 0;
+    std::vector<ProductSuggestion> suggestions;
+    std::string feedback;
 
-    // Prepare category list for dropdown, adding "All Categories" at the beginning
-    std::vector<std::string> categoriesForUI;
-    categoriesForUI.push_back("All Categories"); // Add the special 'All' option
-    std::vector<std::string> actualCategories = catalog.getCategories(); // Get from catalog
-    categoriesForUI.insert(categoriesForUI.end(), actualCategories.begin(), actualCategories.end());
+    // Image & detail state
+    bool showDetails = false;
+    int   detailID    = 0;
+    std::map<int, GLuint>   textureMap;
+    std::map<int, ImVec2>   sizeMap;
+    std::map<int, std::string> descMap = {
+        {101, "A powerful smartphone with OLED display and fast processor."},
+        {102, "A sleek smartwatch with fitness tracking and notifications."},
+        {103, "A 55-inch Smart TV with 4K resolution and HDR support."},
+        {201, "Comprehensive guide to data structures and algorithms."},
+        {204, "A handbook of best practices in writing clean, maintainable code."}
+    };
 
-    // Convert C++ strings to const char* for ImGui Combo - must be done carefully!
-    std::vector<const char*> categoryItems;
-    categoryItems.reserve(categoriesForUI.size());
-    for (const auto& cat : categoriesForUI) {
-        categoryItems.push_back(cat.c_str());
+    // Paths to images (relative to exe)
+    std::map<int, std::string> pathMap = {
+        {101, "images/smartphone.png"},
+        {102, "images/smartwatch.png"},
+        {103, "images/smarttv.png"},
+        {201, "images/dsa.png"},
+        {204, "images/cleancode.png"}
+    };
+    // Preload textures
+    for (auto& kv : pathMap) {
+        int w,h;
+        GLuint tex;
+        if (LoadTextureFromFile(kv.second.c_str(), &tex, &w, &h)) {
+            textureMap[kv.first] = tex;
+            sizeMap[kv.first]    = ImVec2((float)w, (float)h);
+        }
     }
 
-    // --- 7. Main Render Loop ---
-    while (!glfwWindowShouldClose(window)) {
-        // --- Event Handling ---
-        glfwPollEvents(); // Poll inputs
+    // Build category list
+    std::vector<std::string> cats = {"All Categories"};
+    auto backendCats = catalog.getCategories();
+    cats.insert(cats.end(), backendCats.begin(), backendCats.end());
+    std::vector<const char*> catItems;
+    for (auto& c: cats) catItems.push_back(c.c_str());
 
-        // --- Start ImGui Frame ---
+    // --- Main Loop ---
+    while (!glfwWindowShouldClose(window)) {
+        glfwPollEvents();
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        // --- Draw Your UI ---
-        {
-            ImGui::Begin("Product Search"); // Create a window
-
-            // --- Category Selector ---
-            if (ImGui::Combo("Category", &selectedCategoryIndex, categoryItems.data(), categoryItems.size())) {
-                // Category changed, clear suggestions and feedback
-                currentSuggestions.clear();
-                feedbackMessage = "";
+        // Main Window
+        ImGui::Begin("Product Search");
+        ImGui::SetNextItemWidth(300);
+        ImGui::Combo("Category", &selectedCategoryIndex, catItems.data(), (int)catItems.size());
+        ImGui::Separator();
+        ImGui::SetNextItemWidth(400);
+        ImGui::InputText("Search", searchQuery, sizeof(searchQuery));
+        suggestions = catalog.searchProducts(searchQuery, (selectedCategoryIndex>0?cats[selectedCategoryIndex]:""), 10);
+        ImGui::Separator();
+        ImGui::Text("Suggestions:");
+        if (suggestions.empty()) {
+            ImGui::Text("No products found matching '%s'", searchQuery);
+        } else {
+            ImGui::BeginChild("scrolling");
+            for (auto& s: suggestions) {
+                char buf[256];
+                snprintf(buf, sizeof(buf), "%s (ID:%d)  $%.2f", s.name.c_str(), s.productID, s.popularity);
+                if (ImGui::Selectable(buf)) {
+                    detailID    = s.productID;
+                    showDetails = true;
+                }
             }
+            ImGui::EndChild();
+        }
+        ImGui::Separator();
+        if (!feedback.empty()) ImGui::TextWrapped("%s", feedback.c_str());
+        ImGui::End();
 
-            // Get the actual category name (or empty for "All")
-            std::string currentCategory = "";
-            if (selectedCategoryIndex > 0 && selectedCategoryIndex < categoriesForUI.size()) {
-                currentCategory = categoriesForUI[selectedCategoryIndex];
-            } // Index 0 means "All", so category remains ""
+        // Details Window
+        if (showDetails) {
+            ImGui::Begin("Product Details", &showDetails);
+            ProductSuggestion info = suggestions.front();
+            for (auto& s: suggestions) if (s.productID == detailID) info = s;
 
+            ImGui::Text("%s", info.name.c_str());
+            ImGui::Text("Price: $%.2f", info.popularity);
             ImGui::Separator();
-
-            // --- Search Input ---
-            if (ImGui::InputText("Search", searchQuery, sizeof(searchQuery), ImGuiInputTextFlags_EnterReturnsTrue)) {
-                // User pressed Enter or focus lost - trigger search explicitly (or trigger on change)
-                // No action needed here if we search every frame the text changes (below)
+            if (textureMap.count(detailID)) {
+                ImVec2 sz = sizeMap[detailID];
+                float aspect = sz.x > 0 ? sz.y/sz.x : 1.0f;
+                ImTextureID tex_id = (ImTextureID)(intptr_t)textureMap[detailID];
+                ImGui::Image(tex_id, ImVec2(200, 200 * aspect), ImVec2(0,0), ImVec2(1,1));
             }
-
-            // Dynamic search: perform search whenever query or category changes
-            // (Could add debounce for very large catalogs)
-            currentSuggestions = catalog.searchProducts(searchQuery, currentCategory, 10); // Limit to 10 suggestions
-
             ImGui::Separator();
-
-            // --- Display Suggestions ---
-            ImGui::Text("Suggestions:");
-            if (currentSuggestions.empty()) {
-                ImGui::Text("  No products found matching '%s'", searchQuery);
-            } else {
-                 ImGui::BeginChild("SuggestionsScroll", ImVec2(0, ImGui::GetContentRegionAvail().y - 60), false, ImGuiWindowFlags_HorizontalScrollbar);
-                 for (const auto& sugg : currentSuggestions) {
-                     // Use Selectable to allow interaction
-                     char buf[512];
-                     snprintf(buf, sizeof(buf), "%-25s (ID: %d) - Pop: %.2f",
-                              sugg.name.c_str(), sugg.productID, sugg.popularity);
-
-                     if (ImGui::Selectable(buf)) {
-                         // --- Action: Increase Popularity on Click ---
-                         // Need the category the product *actually* belongs to!
-                         // This requires reverse lookup or storing category with suggestion
-                         // SIMPLIFICATION: Assume we know the category for now, OR only allow click-update when a category is selected
-                         // Let's only allow boost if a specific category IS selected for simplicity here.
-                         if (!currentCategory.empty()) {
-                             if (catalog.updateProductPopularity(currentCategory, sugg.name, 2.0)) { // Boost by 2.0
-                                 feedbackMessage = "Boosted popularity for: " + sugg.name;
-                                 // Re-search immediately to show updated score (might reorder list)
-                                 currentSuggestions = catalog.searchProducts(searchQuery, currentCategory, 10);
-                             } else {
-                                 feedbackMessage = "Error boosting popularity for: " + sugg.name;
-                              }
-                         } else {
-                              feedbackMessage = "Popularity boost click only enabled when a specific category is selected.";
-                         }
-
-                     }
-                 }
-                 ImGui::EndChild();
-            }
-
-             ImGui::Separator();
-
-            // --- Other Actions ---
-             if (ImGui::Button("Apply 10% Decay")) {
-                 catalog.applyGlobalDecay(0.90);
-                 feedbackMessage = "Applied 10% popularity decay globally.";
-                 // Re-search immediately to show updated scores
-                 currentSuggestions = catalog.searchProducts(searchQuery, currentCategory, 10);
-             }
-
-             // --- Feedback Message Area ---
-             if (!feedbackMessage.empty()) {
-                 ImGui::TextWrapped("Info: %s", feedbackMessage.c_str());
-             }
-
-            ImGui::End(); // End the window
+            if (descMap.count(detailID))
+                ImGui::TextWrapped(descMap[detailID].c_str());
+            ImGui::End();
         }
 
-
-        // --- Rendering ---
-        ImGui::Render(); // Prepare draw data
-        int display_w, display_h;
-        glfwGetFramebufferSize(window, &display_w, &display_h); // Get window size
-        glViewport(0, 0, display_w, display_h); // Set viewport
-        glClearColor(0.45f, 0.55f, 0.60f, 1.00f); // Set clear color (background)
-        glClear(GL_COLOR_BUFFER_BIT); // Clear the screen
-
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData()); // Render ImGui data
-
-        // --- Swap Buffers ---
-        glfwSwapBuffers(window); // Display the rendered frame
+        ImGui::Render();
+        int w,h; glfwGetFramebufferSize(window, &w, &h);
+        glViewport(0,0,w,h);
+        glClearColor(0.45f,0.55f,0.60f,1.00f);
+        glClear(GL_COLOR_BUFFER_BIT);
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+        glfwSwapBuffers(window);
     }
 
-    // --- 8. Cleanup ---
+    // Cleanup
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
-
     glfwDestroyWindow(window);
     glfwTerminate();
-
     return 0;
 }

@@ -28,6 +28,7 @@ include_directories(
     glad
     extern/imgui
     extern/imgui/backends
+    extern/imgui/stb  
     C:/glfw-3.4.bin.WIN64/include
 )
 
