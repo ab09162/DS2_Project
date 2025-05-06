@@ -2,7 +2,6 @@ CMakeFiles/e_commerce_gui.dir/src/ProductCatalog.cpp.o: \
   /Users/test/Downloads/DS\ 2\ project/DS2_Project-1/DS2_Proj/src/ProductCatalog.cpp \
   /Users/test/Downloads/DS\ 2\ project/DS2_Project-1/DS2_Proj/src/ProductCatalog.h \
   /Users/test/Downloads/DS\ 2\ project/DS2_Project-1/DS2_Proj/src/Trie.h \
-  /Users/test/Downloads/DS\ 2\ project/DS2_Project-1/DS2_Proj/src/TrieNode.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/map \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/equal.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/comp.h \

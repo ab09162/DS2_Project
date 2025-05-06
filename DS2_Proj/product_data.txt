@@ -1,0 +1,20 @@
+Electronics|Smartphones|iPhone 12|101|699.99|images/smartphone.png|A powerful smartphone with OLED display and fast processor.
+Electronics|Smartphones|Samsung Galaxy S21|102|799.99|images/galaxy_s21.png|A fast smartphone with AMOLED display and 5G connectivity.
+Electronics|Smartphones|Google Pixel 6|103|599.99|images/pixel6.png|A clean Android experience with an advanced camera.
+Electronics|Smartwatches|Apple Watch Series 7|104|399.99|images/smartwatch.png|A sleek smartwatch with fitness tracking and ECG.
+Electronics|Smartwatches|Samsung Galaxy Watch 4|105|349.99|images/galaxy_watch4.png|Health-focused smartwatch with Wear OS.
+Electronics|Laptops|MacBook Air M1|106|999.99|images/macbook_air.png|Lightweight and powerful laptop with Apple Silicon.
+Electronics|Laptops|Dell XPS 13|107|1099.99|images/dell_xps13.png|Compact laptop with premium build and display.
+Electronics|Laptops|HP Spectre x360|108|1199.99|images/hp_spectre.png|2-in-1 laptop with touchscreen and stylus support.
+Books|Programming|Clean Code|201|49.99|images/cleancode.png|A comprehensive guide to writing clean code.
+Books|Programming|Algorithms Unlocked|202|39.99|images/algorithms.png|A book that unlocks the secrets of algorithms.
+Books|Programming|The Pragmatic Programmer|203|44.99|images/pragmatic.png|Best practices for modern software development.
+Books|Design|Design Patterns|204|29.99|images/designpatterns.png|Classic design patterns in object-oriented programming.
+Books|Design|Don't Make Me Think|205|24.99|images/dmmt.png|A guide to intuitive user interface design.
+Books|Fiction|The Great Gatsby|206|14.99|images/gatsby.png|A classic novel set in the Jazz Age.
+Books|Fiction|1984|207|12.99|images/1984.png|A dystopian novel about totalitarianism.
+Fashion|Men|Men's Leather Jacket|301|89.99|images/mens_jacket.png|Stylish leather jacket for men.
+Fashion|Women|Women's Handbag|302|59.99|images/handbag.png|Elegant handbag with spacious compartments.
+Fashion|Kids|Kids’ Sneakers|303|29.99|images/kids_sneakers.png|Durable and comfortable sneakers for kids.
+Home|Furniture|Office Desk|401|149.99|images/office_desk.png|Spacious wooden desk with drawers.
+Home|Kitchen|Blender Pro 500|402|49.99|images/blender.png|High-speed blender for smoothies and more.
