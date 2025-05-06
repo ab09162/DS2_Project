@@ -114,6 +114,21 @@
 #include <vector>
 #include <string>
 #include <map>
+std::chrono::steady_clock::time_point ProductCatalog::lastDecay = std::chrono::steady_clock::now();
+void ProductCatalog::decayPopularity() {
+    auto now = std::chrono::steady_clock::now();
+    auto secs = std::chrono::duration_cast<std::chrono::seconds>(now - lastDecay).count();
+    if (secs > 0) {
+        float factor = std::pow(decayRatePerSec, (float)secs);
+        for (auto &kv : popularityMap)
+            kv.second *= factor;
+        lastDecay = now;
+    }
+}
+void ProductCatalog::increasePopularity(int productID) {
+    decayPopularity();
+    popularityMap[productID] += 1.0f;
+}
 
 // Helper function to normalize category names (convert to lowercase)
 std::string ProductCatalog::normalizeCategory(const std::string& category) {
@@ -122,6 +137,7 @@ std::string ProductCatalog::normalizeCategory(const std::string& category) {
                    [](unsigned char c){ return std::tolower(c); });
     return lowerCategory;
 }
+
 
 // Adds a product to the specified category and subcategory's Trie
 void ProductCatalog::addProduct(const std::string& category, const std::string& subcategory, const std::string& productName, int productID, double initialScore) {
@@ -189,7 +205,7 @@ std::vector<ProductSuggestion> ProductCatalog::searchProducts(const std::string&
                                                               const std::string& subcategory,
                                                               int maxResults) {
     std::vector<ProductSuggestion> results;
-
+    decayPopularity();
     if (category.empty()) {
         // Search all categories and subcategories
         for (const auto& catPair : categorySubcategoryTries) {
@@ -218,7 +234,10 @@ std::vector<ProductSuggestion> ProductCatalog::searchProducts(const std::string&
             }
         }
     }
-
+    for (auto &s : results) {
+        auto it = popularityMap.find(s.productID);
+        s.popularity = (it != popularityMap.end() ? it->second : 0.0f);
+    }
     // Sorting by popularity
     std::sort(results.begin(), results.end(), [](const auto& a, const auto& b) {
         return a.popularity > b.popularity;
@@ -231,6 +250,7 @@ std::vector<ProductSuggestion> ProductCatalog::searchProducts(const std::string&
 
     return results;
 }
+
 
 
 // Fetches all categories in the catalog

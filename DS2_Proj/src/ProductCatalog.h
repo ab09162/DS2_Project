@@ -67,9 +67,23 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <chrono>
+#include <cmath>
 
 // ProductCatalog manages multiple categories and subcategories, each with its own Trie for product storage
 class ProductCatalog {
+    // productID → current floating-point popularity
+    std::unordered_map<int, float> popularityMap;
+
+    // “last time we applied decay”
+    static std::chrono::steady_clock::time_point lastDecay;
+
+    // per-second decay multiplier (adjust to taste)
+    static constexpr float decayRatePerSec = 0.999f;
+
+    // call this before reading or bumping popularity
+    void decayPopularity();
+
 private:
     // Stores categories -> subcategories -> Trie of products
     std::unordered_map<std::string, std::unordered_map<std::string, Trie>> categorySubcategoryTries;
@@ -79,6 +93,7 @@ private:
 
 public:
     // Constructor
+    void increasePopularity(int productID) ;
     ProductCatalog() = default;
 
     // Rule of 5 compliance

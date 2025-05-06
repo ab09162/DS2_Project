@@ -674,7 +674,8 @@ void LoadProductsFromFile(
     const std::string& filename,
     ProductCatalog& catalog,
     std::map<int, std::string>& descMap,
-    std::map<int, std::string>& pathMap
+    std::map<int, std::string>& pathMap,
+    std::map<int, float>& priceMap
 ) {
     std::ifstream file(filename);
     if (!file.is_open()) {
@@ -701,6 +702,7 @@ void LoadProductsFromFile(
             catalog.addProduct(category, subcategory, name, id, price);
             pathMap[id] = imagePath;
             descMap[id] = description;
+            priceMap[id] = price; 
         }
     }
 
@@ -742,8 +744,9 @@ int main(int, char**) {
     // --- Prepare Data ---
     std::map<int, std::string> descMap;
     std::map<int, std::string> pathMap;
+    std::map<int, float>       priceMap;
     ProductCatalog catalog;
-    LoadProductsFromFile("product_data.txt", catalog, descMap, pathMap);
+    LoadProductsFromFile("product_data.txt", catalog, descMap, pathMap, priceMap);
 
 
     // UI state
@@ -847,13 +850,29 @@ int main(int, char**) {
                 ImGui::BeginChild("scrolling");
                 for (auto& s : suggestions) {
                     char buf[256];
-                    snprintf(buf, sizeof(buf), "%s (ID:%d)  $%.2f", s.name.c_str(), s.productID, s.popularity);
+                    // snprintf(buf, sizeof(buf), "%s (ID:%d)  $%.2f", s.name.c_str(), s.productID, s.popularity);
+                    // snprintf(buf, sizeof(buf), "%s  (Popularity: %.2f)", s.name.c_str(), s.popularity);
+                    snprintf(buf, sizeof(buf),
++                         "%s  (Price: $%.2f)  (Popularity: %.2f)",
++                         s.name.c_str(),
++                         priceMap[s.productID],    // ← display real price
++                         s.popularity);
+                    
+
+
                     ImGui::Selectable(buf);
 
+                    // if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0)) {
+                    //     detailID = s.productID;
+                    //     inDetailsView = true;
+                    // }
                     if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0)) {
                         detailID = s.productID;
+                        catalog.increasePopularity(detailID);
+                        // catalog.increasePopularity(detailID); // increase popularity
                         inDetailsView = true;
                     }
+
                 }
                 ImGui::EndChild();
             }
@@ -875,7 +894,9 @@ int main(int, char**) {
             }
 
             ImGui::Text("%s", info.name.c_str());
-            ImGui::Text("Price: $%.2f", info.popularity);
+            // ImGui::Text("Price: $%.2f", info.popularity);
+            ImGui::Text("Price: $%.2f", priceMap[detailID]);   // ← real price
+            ImGui::Text("Popularity: %.2f", info.popularity); // ← popularity next
             ImGui::Separator();
 
             if (textureMap.count(detailID)) {
