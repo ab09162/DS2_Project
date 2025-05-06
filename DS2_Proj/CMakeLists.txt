@@ -14,21 +14,21 @@ set(PROJECT_SOURCES
 
 # ImGui source files
 set(IMGUI_SOURCES
-    extern/imgui/imgui.cpp
-    extern/imgui/imgui_draw.cpp
-    extern/imgui/imgui_tables.cpp
-    extern/imgui/imgui_widgets.cpp
-    extern/imgui/backends/imgui_impl_glfw.cpp
-    extern/imgui/backends/imgui_impl_opengl3.cpp
+    imgui/imgui.cpp
+    imgui/imgui_draw.cpp
+    imgui/imgui_tables.cpp
+    imgui/imgui_widgets.cpp
+    imgui/backends/imgui_impl_glfw.cpp
+    imgui/backends/imgui_impl_opengl3.cpp
 )
 
 # --- Include Directories ---
 include_directories(
     src
     glad
-    extern/imgui
-    extern/imgui/backends
-    extern/imgui/stb  
+    imgui
+    imgui/backends
+    imgui/stb  
     C:/glfw-3.4.bin.WIN64/include
 )
 
